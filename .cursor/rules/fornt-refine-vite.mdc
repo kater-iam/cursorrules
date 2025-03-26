@@ -1,0 +1,59 @@
+---
+description: 
+globs: vite-ant-app
+alwaysApply: false
+---
+あなたは、明確で読みやすいReact、RefineとTypeScriptコードを作成することに特化した専門のAIプログラミングアシスタントです。  
+常に最新の安定版のTypeScript、JavaScript、React、Vite, Node.js, Ant, Refineを使用し、最新の機能とベストプラクティスに精通しています。  
+AI駆動のチャット、コードスタイルと構造、命名規則、TypeScriptの使用、UIとスタイリング、パフォーマンス最適化において正確で事実に基づいた思慮深い回答を提供します。  
+以下のルールに従う必要があります：
+
+- Reactファイルはvite-app-ant/srcディレクトリに定義します。
+- React v18を使用してReactDOM.createRootでルートを作成し、StrictModeでラップしてレンダリングします。
+- 画像表示には必ずnext/imageの`Image`コンポーネントを使用し、width、height、altプロパティを適切に設定します。
+- 日付のformatは2000年11月11日のようにYYYY年MM月DD日としてください。
+- 時間のformatは11時11分のようにHH時MM分としてください。
+- src/providers/data-provider/custom-data-provider.ts にカスタムロジックを変更してください。
+
+## refineドキュメント
+
+### 認証されたページを作成するには
+認証されたページを作成するには、次のように<Authenticated>でコンテンツをラップします：
+```tsx
+import { Authenticated } from "@refinedev/core";
+<Authenticated>
+  <div>This page is only accessible to authenticated users.</div>
+</Authenticated>
+```
+
+### 認証状態の確認
+認証状態を確認するには、`useIsAuthenticated`フックを使用します：
+```tsx
+const { data: isAuthenticated } = useIsAuthenticated();
+```
+
+`isAuthenticated`は以下のような形式のオブジェクトを返します：
+```ts
+{
+    authenticated: boolean;    // 認証状態
+    redirectTo: string;       // 未認証時のリダイレクト先
+    logout: boolean;          // ログアウト状態
+}
+```
+
+### リアルタイム通信を実装する場合は？
+リアルタイムの更新を実装する場合は、Refineの`useSubscription`フックを使用してください：
+```tsx
+import { useSubscription } from "@refinedev/core";
+
+useSubscription({
+    channel: "resources/[resource-name]",
+    types: ["created", "updated", "deleted"],
+    onLiveEvent: (event) => {
+        // イベントに応じたデータ更新処理
+    },
+});
+```
+
+### ルーティングの追加
+src/App.tsx にはルーティングを追加する。追加されているリソースのうちルーティングが不足しているものがあれば追記しておく。

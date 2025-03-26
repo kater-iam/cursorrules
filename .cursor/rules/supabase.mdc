@@ -1,0 +1,165 @@
+---
+description: 
+globs: supabase/**
+alwaysApply: false
+---
+---
+description: Supabaseに関連する内容
+globs: supabase/**
+---
+## データベース定義の更新手順
+
+データベースの構造を変更する際は、以下の手順に従ってください：
+1. マイグレーションファイルの作成・更新
+   - 新しい変更は既存のマイグレーションファイルを更新
+   - ファイル名は`YYYYMMDDHHMMSS_descriptions.sql`の形式
+   - コメントを必ず追加し、変更内容を明確に
+   - ロールバック手順も考慮する
+
+2. ドキュメントの更新
+   - DB設計.md のER図を更新
+   - テーブル定義を更新
+   - ENUMタイプの定義を更新（必要な場合）
+   - カラムの説明を日本語で追加
+   - リレーションシップの更新
+
+3. シードデータの更新
+   - `supabase/seed.sql`の更新
+   - 新しいカラムに適切なテストデータを追加
+   - データの整合性を確認
+   - コメントで各データの意図を説明
+
+4. 型定義の更新
+   - データベースをリセットして型定義を更新
+   ```bash
+   cd supabase && supabase db reset && supabase gen types --lang=typescript --local > ../next-app/src/types/database.types.ts && cd ../next-app
+   ```
+
+5. テストの更新
+   - `db_test`ディレクトリ内のテストコードを更新
+   - 新しいカラムのテストが追加されているか
+   - 既存のテストが更新されているか
+   - エッジケースが考慮されているか
+
+6. RLSポリシーの更新
+   - 新しいカラムに対するアクセス制御を設定
+   - 適切な権限設定を確認
+   - セキュリティの考慮
+
+
+## マイグレーションファイルのルール
+
+1. ファイル命名規則
+   - 形式：`YYYYMMDDHHMMSS_description.sql`
+   - 例：
+     - ❌ `20240128_create_tables.sql`
+     - ⭕️ `20240128121212_create_profiles.sql`
+
+2. ファイル構成
+   - ENUMタイプの定義
+   - テーブルの作成
+   - カラムコメントの追加
+   - インデックスの作成
+   - トリガーの作成
+   - 例：
+     ```sql
+     -- Create enum types
+     CREATE TYPE user_role AS ENUM ('admin', 'instructor', 'student');
+
+     -- Create table
+     CREATE TABLE profiles (
+         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+         ...
+     );
+
+     -- Add column comments
+     COMMENT ON COLUMN profiles.id IS 'プロファイルID';
+     ...
+
+     -- Create indexes
+     CREATE INDEX idx_profiles_user_id ON profiles(user_id);
+     ...
+
+     -- Create triggers
+     CREATE TRIGGER update_profiles_updated_at
+         BEFORE UPDATE ON profiles
+         FOR EACH ROW
+         EXECUTE FUNCTION update_updated_at_column();
+     ```
+
+3. コメントの記述
+   - すべてのカラムに日本語でコメントを追加
+   - 外部キー参照の場合は参照先のテーブルも明記
+   - 例：
+     ```sql
+     COMMENT ON COLUMN reservations.lesson_schedule_id IS 'レッスンスケジュールID（lesson_schedulesテーブルの外部キー）';
+     ```
+
+4. タイムスタンプの設定
+   - `created_at`と`updated_at`カラムを必ず追加
+   - デフォルト値とトリガーを設定
+   - 例：
+     ```sql
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('JST'::text, NOW()) NOT NULL,
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('JST'::text, NOW()) NOT NULL
+     ```
+
+5. 依存関係の考慮
+   - 外部キー参照先のテーブルが先に作成されていることを確認
+   - マイグレーションファイルの番号で順序を制御
+   - 例：
+     - `20240128000001_common.sql`（共通関数）
+     - `20240128000002_profiles.sql`（プロファイル）
+     - `20240128000003_lessons.sql`（レッスン）
+     - `20240128000004_lesson_schedules.sql`（レッスンスケジュール）
+
+6. ロールバック手順の考慮
+   - 各テーブルの削除順序を考慮
+   - 依存関係の逆順で削除
+   - 例：
+     ```sql
+     -- テーブル作成時
+     CREATE TABLE profiles ...
+     CREATE TABLE lessons ...
+     CREATE TABLE lesson_schedules ...
+
+     -- ロールバック時
+     DROP TABLE lesson_schedules;
+     DROP TABLE lessons;
+     DROP TABLE profiles;
+     ```
+
+## タイムゾーンのルール
+
+1. 基本設定
+   - すべてのタイムゾーンはJST（日本標準時）を使用する
+   - データベースのタイムスタンプはJSTで保存・取得する
+
+2. マイグレーションファイルでの設定
+   - タイムスタンプのデフォルト値は以下のように設定する：
+     ```sql
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT (current_timestamp AT TIME ZONE 'JST' AT TIME ZONE 'Asia/Tokyo') NOT NULL,
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT (current_timestamp AT TIME ZONE 'JST' AT TIME ZONE 'Asia/Tokyo') NOT NULL
+     ```
+
+3. アプリケーションでの表示
+   - フロントエンドでの日時表示は必ずJSTで行う
+   - 日付フォーマット：YYYY年MM月DD日
+   - 時間フォーマット：HH時MM分
+
+4. データ操作時の注意点
+   - データベースへの挿入時は必ずJSTで行う
+   - タイムゾーンの変換が必要な場合は、明示的に`Asia/Tokyo`を指定する
+   - 例：
+     ```sql
+     INSERT INTO lesson_schedules (start_time, end_time)
+     VALUES 
+     ('2024-02-01 10:00:00+09'::timestamptz, '2024-02-01 12:00:00+09'::timestamptz);
+     ```
+
+
+
+## SupabaseのDockerイメージとコンテナについて
+
+1. Supabase用のDockerコンテナはディスク容量を確保するので、不要になったイメージは積極的にpruneして削除するようにする。
+具体的にはsupabaseコマンドを実行して新しいコンテナを取得した場合、同名の古いイメージが無いか確認して削除をする。
