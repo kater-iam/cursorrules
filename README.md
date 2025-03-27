@@ -13,6 +13,14 @@ This repository serves as a central hub for Cursor IDE rules and configurations.
 - Version control for rules
 - Direct integration with GitHub repositories
 
+## Available Rules
+
+- `basic.mdc`: Basic configuration and preferences for Cursor IDE
+- `documents.mdc`: Documentation standards and guidelines
+- `fornt-refine-vite.mdc`: Frontend development rules with Vite
+- `git.mdc`: Git and GitHub workflow guidelines
+- `supabase.mdc`: Supabase integration and usage rules
+
 ## Usage
 
 ### Downloading Rules
@@ -20,12 +28,18 @@ This repository serves as a central hub for Cursor IDE rules and configurations.
 You can download rules directly from this repository using curl commands. Here are some examples:
 
 ```bash
-# Download a specific rule file
-curl -o .cursor/rules/your-rule.json https://raw.githubusercontent.com/kater-iam/cursorrules/main/rules/your-rule.json
+# Download basic configuration
+curl -o .cursor/rules/basic.mdc https://raw.githubusercontent.com/kater-iam/cursorrules/main/.cursor/rules/basic.mdc
 
-# Download multiple rules
-curl -o .cursor/rules/rule1.json https://raw.githubusercontent.com/kater-iam/cursorrules/main/rules/rule1.json
-curl -o .cursor/rules/rule2.json https://raw.githubusercontent.com/kater-iam/cursorrules/main/rules/rule2.json
+# Download documentation rules
+curl -o .cursor/rules/documents.mdc https://raw.githubusercontent.com/kater-iam/cursorrules/main/.cursor/rules/documents.mdc
+
+# Download all rules
+curl -o .cursor/rules/basic.mdc https://raw.githubusercontent.com/kater-iam/cursorrules/main/.cursor/rules/basic.mdc
+curl -o .cursor/rules/documents.mdc https://raw.githubusercontent.com/kater-iam/cursorrules/main/.cursor/rules/documents.mdc
+curl -o .cursor/rules/fornt-refine-vite.mdc https://raw.githubusercontent.com/kater-iam/cursorrules/main/.cursor/rules/fornt-refine-vite.mdc
+curl -o .cursor/rules/git.mdc https://raw.githubusercontent.com/kater-iam/cursorrules/main/.cursor/rules/git.mdc
+curl -o .cursor/rules/supabase.mdc https://raw.githubusercontent.com/kater-iam/cursorrules/main/.cursor/rules/supabase.mdc
 ```
 
 ### Manual Setup
@@ -39,9 +53,11 @@ curl -o .cursor/rules/rule2.json https://raw.githubusercontent.com/kater-iam/cur
 ```
 .cursor/
 └── rules/
-    ├── rule1.json
-    ├── rule2.json
-    └── ...
+    ├── basic.mdc
+    ├── documents.mdc
+    ├── fornt-refine-vite.mdc
+    ├── git.mdc
+    └── supabase.mdc
 ```
 
 ## Contributing
