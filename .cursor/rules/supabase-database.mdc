@@ -1,0 +1,18 @@
+---
+description: About DB architecture
+globs: 
+alwaysApply: false
+---
+1. 外部キー参照のキーに対してインデックスを貼らない。
+2. RLSで特定のテーブルに対して「管理者はすべての作業ができる」場合には、「Admins can do anything」というルール名で、下記のように is_admin() 関数を利用して判定する。まとめることが可能であれば、SELECTやUPDATEなど操作ごと分割しない。なお、 is_admin() 関数は profiles テーブルのマイグレーションに作成を含める。
+```
+CREATE POLICY "Admins can do anything" ON public.images
+FOR ALL
+TO authenticated
+ USING (
+    is_admin()
+  )
+  WITH CHECK (
+    is_admin()
+  );
+```
