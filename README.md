@@ -28,13 +28,14 @@ This repository serves as a central hub for Cursor IDE rules and configurations.
 You can download and extract all rules at once using the following command:
 
 ```bash
-curl -L https://github.com/kater-iam/cursorrules/archive/main.tar.gz | tar xz --strip=2 "cursorrules-main/.cursor"
+mkdir -p .cursor && curl -L https://github.com/kater-iam/cursorrules/archive/main.tar.gz | tar -xz -C .cursor --strip-components=2 cursorrules-main/.cursor
 ```
 
 This command:
-1. Downloads the GitHub repository archive
-2. Extracts only the `.cursor` directory
-3. Places it in your current directory
+1. Creates .cursor directory if it doesn't exist
+2. Downloads the GitHub repository archive
+3. Extracts the `.cursor` directory contents into your local `.cursor` directory
+4. Preserves the correct directory structure
 
 ### Individual Rules Download
 
