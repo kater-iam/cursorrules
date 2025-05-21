@@ -1,0 +1,24 @@
+---
+description: About Supabase operation such as supabase cli or Supabase migration
+globs: 
+alwaysApply: false
+---
+1. Supabaseのローカル操作は専用の「supabase」という名前のTerminalウィンドウで実行すること。
+
+2. Supabaseのローカル操作は全てバックグラウンドで実行すること。
+
+3. ローカル関数の起動は `pkill -f \"supabase functions serve\" ; supabase functions serve > supabase/functions.log 2>&1 &` を使用すること。
+
+4. オンラインSupabaseへの関数デプロイは明示的な指示があるまで行わないこと。
+
+5. データベース変更は supabase CLI の `supabase migrate new` コマンドを使用してマイグレーションファイルを作成し、適切なコメントとロールバック手順を含めること。ただしプロジェクトの初期バージョン（概ね v1.0 より前）については既存のマイグレーションファイルを編集してまとめること。
+
+6. マイグレーションファイル名は CLI の `supabase migrate new` コマンドによって自動生成されるため、ファイル名は `YYYYMMDDHHMMSS_descriptions.sql` の形式を保つこと。
+
+7. 全てのテーブルに `created_at` と `updated_at` カラムをJSTタイムゾーンで設定すること。
+
+8. 全てのカラムに日本語でコメントを追加すること。
+
+9. Dockerイメージは新規取得後、古いイメージを確認して削除すること。
+
+10. psql コマンドを使う際には psql  \"$(supabase status --output json | jq -r '.DB_URL')\" を使う。

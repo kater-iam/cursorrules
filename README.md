@@ -23,9 +23,22 @@ This repository serves as a central hub for Cursor IDE rules and configurations.
 
 ## Usage
 
-### Downloading Rules
+### Quick Setup (All Rules)
 
-You can download rules directly from this repository using curl commands. Here are some examples:
+You can download and extract all rules at once using the following command:
+
+```bash
+curl -L https://github.com/kater-iam/cursorrules/archive/main.tar.gz | tar xz --strip=2 "cursorrules-main/.cursor"
+```
+
+This command:
+1. Downloads the GitHub repository archive
+2. Extracts only the `.cursor` directory
+3. Places it in your current directory
+
+### Individual Rules Download
+
+If you need to download rules individually, you can use these commands:
 
 ```bash
 # Download basic configuration

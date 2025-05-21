@@ -1,0 +1,106 @@
+---
+description: Cypessのテストに関すること
+globs: cypress/**
+alwaysApply: false
+---
+# Cypressテストに関する注意点
+
+## ディレクトリ構造
+Cypressのファイルは以下の構造で配置します：
+```
+/cypress/
+  ├── e2e/           # テストファイル
+  ├── fixtures/      # テストデータ
+  ├── support/       # サポートファイル
+  │   ├── e2e.js    # グローバル設定
+  │   └── commands.js # カスタムコマンド
+  ├── downloads/     # ダウンロードファイル
+  ├── screenshots/   # スクリーンショット
+  ├── videos/        # テスト実行動画
+  └── cypress.config.js  # Cypress設定ファイル
+```
+
+## 設定ファイル（cypress.config.js）
+```javascript
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      // ログ出力の設定
+      on('task', {
+        log({ type, message }) {
+          // ...
+        }
+      });
+    },
+    supportFile: 'support/e2e.js',
+    specPattern: 'e2e/**/*.cy.{js,jsx,ts,tsx}',
+    chromeWebSecurity: false,
+    viewportWidth: 1280,
+    viewportHeight: 800,
+    defaultCommandTimeout: 10000,
+    pageLoadTimeout: 10000,
+    video: true
+  }
+});
+```
+
+## テストファイルの命名規則
+- ファイル名: `機能名.cy.js`
+- 例：`query.cy.js`, `query_edit.cy.js`
+
+## テストコードの書き方
+1. ログ出力
+   ```javascript
+   cy.task('log', { type: 'info', message: 'テスト開始' });
+   ```
+   - type: 'log'（シアン）, 'error'（赤）, 'info'（緑）
+
+2. 要素の待機
+   ```javascript
+   cy.get('#root').should('exist');
+   cy.get('form').should('be.visible');
+   ```
+
+3. APIリクエストの待機
+   ```javascript
+   cy.intercept('POST', '**/api/endpoint').as('apiCall');
+   cy.wait('@apiCall', { timeout: 10000 });
+   ```
+
+## エラー処理
+1. グローバルエラー処理（support/e2e.js）
+   ```javascript
+   Cypress.on('uncaught:exception', (err, runnable) => {
+     return false; // アプリケーションのエラーをテストの失敗として扱わない
+   });
+   ```
+
+2. タイムアウト設定
+   - デフォルトコマンドタイムアウト: 10秒
+   - ページロードタイムアウト: 10秒
+
+## テスト実行コマンド
+```bash
+# テストの実行
+npm run cy:run
+
+# 開発モードでテストを実行
+npm run cy:open
+```
+
+## 注意点
+1. フロントエンドアプリケーションの起動確認
+   - テスト実行前に`npm run dev`でアプリケーションが起動していることを確認
+
+2. 環境変数の設定
+   - テスト環境用の`.env.test`ファイルを用意
+   - Supabase URLやAPIキーなどの設定を確認
+
+3. スクリーンショットと動画
+   - 失敗したテストのスクリーンショットは`screenshots/`に保存
+   - テスト実行の動画は`videos/`に保存
+   - これらのファイルは`.gitignore`に追加済み
+
+4. CORSとセキュリティ
+   - `chromeWebSecurity: false`を設定して、CORSエラーを回避
+   - 本番環境では適切なCORS設定を行うこと

@@ -1,7 +1,6 @@
 ---
-description: 
-globs: vite-ant-app
-alwaysApply: false
+description: フロントエンド側の修正を行う場合に使う、viteやrefineを編集する際に使う
+globs: vite-app-ant/**/*
 ---
 あなたは、明確で読みやすいReact、RefineとTypeScriptコードを作成することに特化した専門のAIプログラミングアシスタントです。  
 常に最新の安定版のTypeScript、JavaScript、React、Vite, Node.js, Ant, Refineを使用し、最新の機能とベストプラクティスに精通しています。  

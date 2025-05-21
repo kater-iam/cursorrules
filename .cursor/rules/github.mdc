@@ -1,0 +1,24 @@
+---
+description: About GitHub such as PullRequest
+globs: 
+alwaysApply: false
+---
+# PRの作成ルール
+
+1. PRのベースブランチはdevelopブランチとすること。mainブランチへのマージはリリース時のみ許可。
+
+2. PRのタイトルは日本語で記載し、変更内容が明確に分かるようにすること。
+
+3. レビュワーは指定しなくて良い。
+
+4. PRの本文は「概要」と「変更内容」のセクションを必ず含めること。
+
+5. コマンドラインでPRを作成する際は、以下の手順で一時ファイルを使用すること：
+   a. プロジェクトルート直下に`pr-body.md`を作成
+   b. `gh pr create`コマンドでPRを作成
+   c. PRの作成が完了したら、必ず`pr-body.md`を削除（`rm pr-body.md`）
+   d. `/tmp`ディレクトリは使用しない
+
+注意：
+- `pr-body.md`は`.gitignore`に含まれており、Gitの管理対象外
+- PR作成の一連の手順が完了するまで、他の作業を開始しない

@@ -1,7 +1,6 @@
 ---
-description: 
-globs: docs/*.md,*.md
-alwaysApply: false
+description: ドキュメント仕様書
+globs: *.md
 ---
 ## 共通仕様
 - マークダウンで記載するときはヘディングやリストを使い、構造化を明確に利用する。

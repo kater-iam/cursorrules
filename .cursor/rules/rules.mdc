@@ -1,0 +1,8 @@
+---
+description: 
+globs: .cursor/**
+alwaysApply: false
+---
+# .cursor/rules の整備について
+
+- .cursor/rules
